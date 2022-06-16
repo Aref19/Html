@@ -1,6 +1,5 @@
-
-
 export var config = {
+
     type: Phaser.AUTO,
     width: 1800,
     height: 600,
@@ -12,6 +11,7 @@ export var config = {
             debug: false
         }
     },
+
     backgroundColor:'#049cd8',
     
     scene: {
@@ -22,4 +22,3 @@ export var config = {
     
     
 };
-
