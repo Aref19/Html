@@ -1,10 +1,12 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var soundhinter=new Sound(game,"hinter",1,true);
 
 function preload() {
 
     this.load.image('tree', 'phots/tree.png');
     this.load.image('ground', 'phots/platform.png');
     this.load.spritesheet('plyer', 'phots/snjab.png', { frameWidth: 48, frameHeight: 48 });
+    game.load.audio('hinterground', 'sound/SoundEffects/hinterground1.wav');
 
 }
 
@@ -20,6 +22,9 @@ function create() {
 
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
+ 
+    //sound
+    game.add.audio('hinterground');
 
     //  A simple background for our game
     game.add.sprite(0, 0, 'tree');
