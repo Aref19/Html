@@ -7,6 +7,9 @@ var win = window;
 var score = 0;
 var scoreText;
 var acron;
+var hintersound;
+var  trem;
+var  rightorlink=false ;
 var game = new Phaser.Game(5000, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
 
 //var camera= new Phaser.Camera(game, 1, 32,  10, 20, 20);
@@ -18,19 +21,26 @@ game.load.image('sky', 'phots/sky.png');
 game.load.image('ground', 'phots/platform.png');
 game.load.image('tree', 'phots/tree1.png');
 game.load.image('box', 'phots/box.png');
+game.load.image('term', 'phots/term.jpg');
 
 game.load.image('acorn', 'phots/acorn.png');
 game.load.spritesheet('plyer', 'phots/snjab.png', 48, 48,35);
 game.load.spritesheet('cat', 'phots/cat.png', 48, 48,35);
+game.load.audio('hinterground', ['sound/hinterground1.mp3']);
 }
 
 function create ()
-{      
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+{    
+    
+    
+  
+scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 //game    
 game.stage.backgroundColor = "#4488AA";
 game.physics.startSystem(Phaser.Physics.ARCADE);
 game.world.setBounds(0, 0, 6000 , 1000);
+
+
 //
 acron = game.add.group();
 acron.enableBody = true;
@@ -41,7 +51,11 @@ platforms = game.add.group();
 platforms.enableBody = true;
 platforms.create(-250, game.world.height -500, 'tree');
 creatBox(platforms);
-var ground = platforms.create(0, game.world.height -30, 'ground');
+  
+  trem= platforms.create(game.world.height+2550, game.world.height -150, 'term');
+  trem.body.immovable = true;
+
+  var ground = platforms.create(0, game.world.height -30, 'ground');
 ground.scale.setTo(150, 150);
 ground.body.immovable = true;
 
@@ -70,13 +84,20 @@ cursors = game.input.keyboard.createCursorKeys();
 game.camera.height=1000;
 game.camera.width=1500;
 
+//sound
+hintersound=game.sound.add("hinterground", 2,true);
+
+
+
+
+
 
 }
 
 function update ()
 { 
-    
-     
+  
+  hintersound.play();
     
     if(!gameOver){
        
@@ -161,6 +182,7 @@ function update ()
     }
   catMove();
 
+
 }else{
     cat.animations.stop();
     cat.frame = 4;
@@ -196,7 +218,7 @@ function creatBox(platform){
    box= platform.create(game.world.height-300, game.world.height -100, 'box');
    box2= platform.create(game.world.height+200, game.world.height -100, 'box');
    box3= platform.create(game.world.height+2000, game.world.height -100, 'box');
-   box4= platform.create(game.world.height+1500, game.world.height -100, 'box');
+   box4= platform.create(game.world.height+3000, game.world.height -100, 'box');
    box.body.immovable = true;
    box2.body.immovable = true;
    box3.body.immovable = true;
@@ -211,9 +233,6 @@ function createat(platform){
  }
 
  function dropacron(){
-
-
-  
         //  Create a star inside of the 'stars' group
         for (let step = 0; step < 20; step++) {
         //    var acorns = acron.create(game.world.height+((Math.random()*1000) *step), game.world.height -(Math.random()*100), 'acorn');
@@ -233,10 +252,26 @@ function createat(platform){
 
         //  This just gives each star a slightly random bounce value
        // acorns.body.bounce.y = 0.7 + Math.random() * 0.2;
-    
-
-
  }
+ function changeVolume(pointer) {
+
+    if (pointer.y < 100)
+    {
+        hintersound.mute = false;
+    }
+    else if (pointer.y < 300)
+    {
+        hintersound.volume += 0.1;
+    }
+    else
+    {
+        hintersound.volume -= 0.1;
+    }
+
+}
+function render() {
+    game.debug.soundInfo(hinterground, 20, 32);
+}
 
 
 
