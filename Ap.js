@@ -26,7 +26,7 @@ game.load.spritesheet('cat', 'phots/cat.png', 48, 48,35);
 
 function create ()
 {      
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = game.add.text(20,  1000/3, 'score: 0', { fontSize: '32px', fill: '#000' });
 //game    
 game.stage.backgroundColor = "#4488AA";
 game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -212,21 +212,21 @@ function createat(platform){
 
  function dropacron(){
 
-
+    var acorns3 ;
   
         //  Create a star inside of the 'stars' group
         for (let step = 0; step < 20; step++) {
         //    var acorns = acron.create(game.world.height+((Math.random()*1000) *step), game.world.height -(Math.random()*100), 'acorn');
          //   var acorns2 = acron.create(game.world.height+(350*step), game.world.height - 100, 'acorn');
-            var acorns3 = acron.create(game.world.height+(300*step), game.world.height - (150-(step*5)), 'acorn');
+             acorns3 = acron.create(step*400, game.world.height - (150-(step*5)), 'acorn');
          //   acorns.body.immovable = true;
            // acorns.body.collideWorldBounds = true;
            // acorns2.body.immovable = true;
            // acorns2.body.collideWorldBounds = true;
-            acorns3.body.immovable = true;
+           
            
           }
-    
+          acorns3.body.immovable = true;
     
         //  Let gravity do its thing
         //acorns.body.gravity.y = 200;
