@@ -10,7 +10,7 @@
     var hintersound;
     var  trem;
     var  rightorlink=false ;
-    var game = new Phaser.Game(5000, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
+    var game = new Phaser.Game(4000, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
 
     //var camera= new Phaser.Camera(game, 1, 32,  10, 20, 20);
     var postionRghit=0;
@@ -24,6 +24,7 @@
     game.load.image('term', 'phots/term.jpg');
 
     game.load.image('acorn', 'phots/acorn.png');
+    game.load.image('save', 'phots/platform.png');
     game.load.spritesheet('plyer', 'phots/snjab.png', 48, 48,35);
     game.load.spritesheet('cat', 'phots/cat.png', 48, 48,35);
     game.load.audio('hinterground', ['sound/hinterground1.mp3']);
@@ -34,7 +35,7 @@
     {    
         
         
-    
+    //text
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     //game    
@@ -42,7 +43,7 @@
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0, 0, 6000 , 1000);
 
-
+ 
     //
     acron = game.add.group();
     acron.enableBody = true;
@@ -52,9 +53,11 @@
     platforms = game.add.group();
     platforms.enableBody = true;
     platforms.create(-250, game.world.height -500, 'tree');
+   var save= platforms.create(5800, game.world.height -200, 'save');
+    save.body.immovable = true;
     creatBox(platforms);
     
-    trem= platforms.create(game.world.height+2300, game.world.height -150, 'term');
+    trem= platforms.create(game.world.height+2350, game.world.height -150, 'term');
     trem.body.immovable = true;
 
     var ground = platforms.create(0, game.world.height -30, 'ground');
@@ -98,7 +101,7 @@
 
     function update ()
     { 
-    
+    console.log("position :"+parseInt(player.position.x));
     hintersound.play();
         
         if(!gameOver){
@@ -162,13 +165,17 @@
             gameOver=true;        
             
         }
-    
+        console.log("cat :"+parseInt(cat.position.x))
 
         if(parseInt(cat.position.x)==629){
             console.log("dsa");
             vorfrei=false;
         }else if(parseInt(cat.position.x)==1148){
         
+            vorfrei=false;
+        }else if(parseInt(cat.position.x)==2951){
+            vorfrei=false;
+        }else if(parseInt(cat.position.x)==3951){
             vorfrei=false;
         }
         if (contoll)
@@ -277,14 +284,19 @@
         game.debug.soundInfo(hinterground, 20, 32);
     }
 function movetrem(){
-    if(parseInt(player.position.x)==game.world.height+2300){
+    if(parseInt(player.position.x)>game.world.height+2300){
         trem.body.gravity.x = 100   
-        console.log("dsaasdsda");       
-    }else if( trem.position.x>3900  ){
-        trem.body.gravity.y = 100  
+        console.log("dsaasdsda"); 
+        if( trem.position.x>3900  ){
+            trem.body.gravity.y = 100  
+        }
+        
     }
 }
 
+function bombe(platForm){
+
+}
 
 
 
