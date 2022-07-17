@@ -6,10 +6,13 @@
     var win = window;
     var score = 0;
     var scoreText;
-    var acron;
+    var acrons;
     var hintersound;
     var  trem;
     var  rightorlink=false ;
+    var gewonnen=false;
+
+    var player;
     var game = new Phaser.Game(4000, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
 
     //var camera= new Phaser.Camera(game, 1, 32,  10, 20, 20);
@@ -43,11 +46,8 @@
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0, 0, 6000 , 1000);
 
- 
-    //
-    acron = game.add.group();
-    acron.enableBody = true;
-    dropacron();
+   
+    
 
     //platform
     platforms = game.add.group();
@@ -63,7 +63,7 @@
     var ground = platforms.create(0, game.world.height -30, 'ground');
     ground.scale.setTo(150, 150);
     ground.body.immovable = true;
-
+   
     //plyer1
     player = game.add.sprite(200, game.world.height - 150, 'plyer',20);
     game.physics.arcade.enable(player);
@@ -83,6 +83,7 @@
     player.animations.add('right', [27, 28, 29], 10, true);
     //cat
     cat.animations.add('right', [27, 28, 29], 10, true);
+    cat.animations.add('left', [13, 14, 15], 10, true);
     cursors = game.input.keyboard.createCursorKeys();
 
     //camera
@@ -91,25 +92,31 @@
 
     //sound
     hintersound=game.sound.add("hinterground", 2,true);
+    acrons = game.add.group();
 
+    //  We will enable physics for any star that is created in this group
+    acrons.enableBody = true;
+    dropacron();
+    //
 
-
-
-
+    
 
     }
 
     function update ()
     { 
-    console.log("position :"+parseInt(player.position.x));
+       
+   
     hintersound.play();
         
         if(!gameOver){
+            game.physics.arcade.collide(acrons, platforms);
         
-        
+            //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+            game.physics.arcade.overlap(player, acrons,collectStar, null, this);
+           
+            
         game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
-
-        
         var hitPlatform = game.physics.arcade.collide(player, platforms);
         var hitPlatform = game.physics.arcade.collide(cat, platforms);
         player.body.velocity.x = 0;
@@ -139,9 +146,18 @@
         //  Allow the player to jump if they are touching the ground.
         if (cursors.up.isDown && player.body.touching.down && hitPlatform)
         {
+            if(score>12){
+                console.log("dsaasdsdsaaaaaaaaaaaada"+score); 
+                player.body.velocity.y = -500; 
+                
+                catzurck();
+            }else{
+               console.log("dsaasdsdsaaaaaaaaaaaada"+score); 
             player.body.velocity.y = -250;  
         
-            contoll=false;
+            contoll=false; 
+            }
+            
             
         }
     if((window. innerWidth-postionRghit)<300){
@@ -157,18 +173,17 @@
             }
         }
         
-        if( parseInt(player.position.x)== parseInt(cat.position.x)){
-            
-    
+        /*if( parseInt(player.position.x)== parseInt(cat.position.x)){
+        
             player.body.bounce.y = 1;
             player.body.collideWorldBounds = false;
             gameOver=true;        
             
-        }
-        console.log("cat :"+parseInt(cat.position.x))
+        }*/
+       
 
         if(parseInt(cat.position.x)==629){
-            console.log("dsa");
+           
             vorfrei=false;
         }else if(parseInt(cat.position.x)==1148){
         
@@ -185,11 +200,11 @@
             player.body.velocity.x = 100;
             player.animations.play('right');    
             postionRghit=2+postionRghit;
-        
             vorfrei=true;
 
         }
     catMove();
+    game.physics.arcade.overlap(player,cat,catTakeMaus, null, this);
     movetrem();
 
     }else{
@@ -204,21 +219,22 @@
     }
 
     function catMove(){
+        if(gewonnen==false){
+
+       
     
-        if(vorfrei){
-        cat.body.velocity.x = 100;
-        cat.animations.play('right'); 
-        console.log("ground :"+parseInt(cat.position.x))
+    if(vorfrei){
+    cat.body.velocity.x = 100;
+    cat.animations.play('right'); 
+      
 
     }else if(!vorfrei ){
-
-        console.log("Jumop");
     cat.body.velocity.y = -250;
     cat.body.velocity.x = 100;
     vorfrei=true;
     }
     
-    
+     }
     
     
     }
@@ -243,27 +259,15 @@
 
     function dropacron(){
 
-
-            //  Create a star inside of the 'stars' group
             for (let step = 0; step < 20; step++) {
-            //    var acorns = acron.create(game.world.height+((Math.random()*1000) *step), game.world.height -(Math.random()*100), 'acorn');
-            //   var acorns2 = acron.create(game.world.height+(350*step), game.world.height - 100, 'acorn');
-                acorns3 = acron.create(step*400, game.world.height - (150-(step*5)), 'acorn');
-            //   acorns.body.immovable = true;
-            // acorns.body.collideWorldBounds = true;
-            // acorns2.body.immovable = true;
-            // acorns2.body.collideWorldBounds = true;
-            
-            
+          var  acorn = acrons.create(step*400, game.world.height - (150-(step*5)), 'acorn');
             }
-            acorns3.body.immovable = true;
+            acorn.body.immovable = true;
         
-            //  Let gravity do its thing
-            //acorns.body.gravity.y = 200;
-
-            //  This just gives each star a slightly random bounce value
-        // acorns.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
+
+
+
     function changeVolume(pointer) {
 
         if (pointer.y < 100)
@@ -286,7 +290,7 @@
 function movetrem(){
     if(parseInt(player.position.x)>game.world.height+2300){
         trem.body.gravity.x = 100   
-        console.log("dsaasdsda"); 
+      
         if( trem.position.x>3900  ){
             trem.body.gravity.y = 100  
         }
@@ -299,6 +303,32 @@ function bombe(platForm){
 }
 
 
+function collectStar (player, acron) {
 
+    // Removes the star from the screen
+   // Removes the star from the screen
+   acron.kill();
+
+    //  Add and update the score
+    score += 1;
+    scoreText.text = 'Score: ' + score;
+
+}
+
+function catTakeMaus (player, cat) {
+
+    // Removes the star from the screen
+   // Removes the star from the screen
+   player.body.bounce.y = 1;
+   player.body.collideWorldBounds = false;
+   gameOver=true;
+
+}
+
+function catzurck(){
+    cat.animations.stop();
+            cat.frame = 4; 
+    gewonnen=true;
+}
 
 
