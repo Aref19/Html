@@ -7,13 +7,15 @@
     var score = 0;
     var scoreText;
     var acrons;
+    var acronsschiss;
     var hintersound;
     var  trem;
     var  rightorlink=false ;
     var gewonnen=false;
-    var time=0;
-
+    var time=0; 
+    var schiss;
     var player;
+    var catgeschossen=false;
     var game = new Phaser.Game(4000, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
 
     //var camera= new Phaser.Camera(game, 1, 32,  10, 20, 20);
@@ -37,7 +39,7 @@
     function create ()
 
     {    
-        
+        schiss=upKey = game.input.keyboard.addKey(Phaser.Keyboard.x);
         
     //text
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
@@ -82,6 +84,7 @@
 
 
     player.animations.add('right', [27, 28, 29], 10, true);
+    player.animations.add('left', [15], 10, true);
     //cat
     cat.animations.add('right', [27, 28, 29], 10, true);
     cat.animations.add('left', [13, 14, 15], 10, true);
@@ -94,8 +97,9 @@
     //sound
     hintersound=game.sound.add("hinterground", 2,true);
     acrons = game.add.group();
-
+    acronsschiss = game.add.group();
     //  We will enable physics for any star that is created in this group
+    acronsschiss.enableBody=true;
     acrons.enableBody = true;
     dropacron();
     //
@@ -144,6 +148,28 @@
             
 
         }
+        if (cursors.left.isDown&&score!=0)
+        {   
+        
+            //  Move to the right
+          
+           player.animations.play('left');  
+            scoreText.x=player.body.x;
+            scoreText.x=player.body.x+20;
+            postionRghit=2+postionRghit;
+            contoll=false;
+          schiss= acronsschiss.create(player.position.x-20, player.position.y+20, 'acorn');
+         
+          schiss.body.gravity.x = -100 ;
+          score=score-1;
+
+          scoreText.text = 'Score: ' + score;
+            
+            
+      //    cronschiss.body.bounce.x = 0.7 + Math.random() * 0.2;
+
+        }
+      
         
         //  Allow the player to jump if they are touching the ground.
         if (cursors.up.isDown && player.body.touching.down && hitPlatform)
@@ -205,8 +231,14 @@
             vorfrei=true;
 
         }
-    catMove();
+        if(catgeschossen==false){
+            catMove(); 
+        }else{
+            catgeschossen=false;
+        }
+   
     game.physics.arcade.overlap(player,cat,catTakeMaus, null, this);
+    game.physics.arcade.overlap(acronsschiss,cat,schiisCat, null, this);
     movetrem();
 
     }else{
@@ -338,4 +370,12 @@ function catzurck(){
     gewonnen=true;
 }
 
+function schiisCat(){
+   
+    cat.animations.stop();
+    cat.frame = 4; 
+    cat.body.collideWorldBounds = false;
+    catgeschossen=true;
+
+}
 
