@@ -11,6 +11,7 @@
     var  trem;
     var  rightorlink=false ;
     var gewonnen=false;
+    var time=0;
 
     var player;
     var game = new Phaser.Game(4000, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
@@ -40,7 +41,7 @@
         
     //text
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-
+  
     //game    
     game.stage.backgroundColor = "#4488AA";
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -129,6 +130,7 @@
             player.body.velocity.x = 100;
             player.animations.play('right');  
             scoreText.x=player.body.x;
+            scoreText.x=player.body.x+20;
             postionRghit=2+postionRghit;
             contoll=false;
 
@@ -234,6 +236,8 @@
     vorfrei=true;
     }
     
+     }else{
+
      }
     
     
@@ -319,6 +323,8 @@ function catTakeMaus (player, cat) {
 
     // Removes the star from the screen
    // Removes the star from the screen
+
+   
    player.body.bounce.y = 1;
    player.body.collideWorldBounds = false;
    gameOver=true;
@@ -328,6 +334,7 @@ function catTakeMaus (player, cat) {
 function catzurck(){
     cat.animations.stop();
             cat.frame = 4; 
+            cat.body.collideWorldBounds = false;
     gewonnen=true;
 }
 
