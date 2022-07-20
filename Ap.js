@@ -7,6 +7,7 @@
     var score = 0;
     var scoreText;
     var acrons;
+    var bomben;
     var acronsschiss;
     var hintersound;
     var  trem;
@@ -17,6 +18,8 @@
     var player;
     var phlanze;
     var catgeschossen=false;
+    var catsound;
+    var bombesound;
     var game = new Phaser.Game(1800, 1000, Phaser.AUTO,' ' , { preload: preload, create: create, update: update });
 
     //var camera= new Phaser.Camera(game, 1, 32,  10, 20, 20);
@@ -32,11 +35,15 @@
     game.load.image('phlanz', 'phots/blume.png');
     game.load.image('acorn', 'phots/acorn.png');
     game.load.image('schiss', 'phots/schiss.png');
+    game.load.image('bombe', 'phots/bombe.png');
     game.load.image('save', 'phots/platform.png');
     game.load.spritesheet('plyer', 'phots/snjab.png', 48, 48,35);
     game.load.spritesheet('cat', 'phots/cat.png', 48, 48,35);
     game.load.image('wolk', 'phots/wolk.png');
     game.load.audio('hinterground', ['sound/hinterground1.mp3']);
+    game.load.audio('catsound', ['sound/soundcatwean.wav']);
+    game.load.audio('bombesound', ['sound/bombe.wav']);
+    bombe.wav
     }
 
     function create ()
@@ -45,7 +52,7 @@
         
         
     //text
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = game.add.text(16, 16, 'score: 0/10', { fontSize: '32px', fill: '#000' });
  
     //game    
     game.stage.backgroundColor = "#4488AA";
@@ -78,7 +85,7 @@
     game.physics.arcade.enable(player);
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
-    player.body.collideWorldBounds = true;
+   
 
 
     //cat
@@ -102,21 +109,24 @@
 
     //sound
     hintersound=game.sound.add("hinterground", 10);
+    catsound=game.sound.add("catsound", 10);
     hintersound.play();
+    
     acrons = game.add.group();
     phlanze=game.add.group();
     phlanze.enableBody=true;
     creatPhlanz();
-     
- 
- 
+     //Bombe
+    bomben=game.add.group();
+    bomben.enableBody=true;
+    creatBobe();
     acronsschiss = game.add.group();
     //  We will enable physics for any star that is created in this group
     acronsschiss.enableBody=true;
     acrons.enableBody = true;
     dropacron();
     //
-
+    bombesound = game.sound.add("bombesound", 10);
     
   
  
@@ -134,7 +144,7 @@
             //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
             game.physics.arcade.overlap(player, acrons,collectStar, null, this);
             game.physics.arcade.overlap(player, phlanze,takeblum, null, this);
-           
+            game.physics.arcade.overlap(player, bomben,plyerBombe, null, this);
             
         game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
         var hitPlatform = game.physics.arcade.collide(player, platforms);
@@ -167,7 +177,7 @@
         {   
         
             //  Move to the right
-          
+            bombesound.play();
            player.animations.play('left');  
            scoreText.x=player.body.x;
            scoreText.x=player.body.x+20;
@@ -189,13 +199,11 @@
         //  Allow the player to jump if they are touching the ground.
         if (cursors.up.isDown && player.body.touching.down && hitPlatform)
         {
-            if(score>12){
-                console.log("dsaasdsdsaaaaaaaaaaaada"+score); 
+            if(score>9){
                 player.body.velocity.y = -500; 
-                
+                player.body.collideWorldBounds = false;
                 catzurck();
             }else{
-               console.log("dsaasdsdsaaaaaaaaaaaada"+score); 
             player.body.velocity.y = -250;  
         
             contoll=false; 
@@ -305,9 +313,19 @@
 
     function dropacron(){
 
-            for (let step = 0; step < 20; step++) {
-          var  acorn = acrons.create(step*400, game.world.height - (150-(step*5)), 'acorn');
-            }
+           
+          var  acorn = acrons.create(500, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(1000, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(1500, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(2500, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(2800, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(2900, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(3500, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(4200, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(4500, game.world.height - (200-(5)), 'acorn');
+          var  acorn = acrons.create(4700, game.world.height - (200-(5)), 'acorn');
+      
+          
             acorn.body.immovable = true;
         
     }
@@ -365,7 +383,12 @@ function collectStar (player, acron) {
 
     //  Add and update the score
     score += 1;
-    scoreText.text = 'Score: ' + score;
+    if(score==13){
+        scoreText.text = 'Jump to your wife';
+    }else{
+        scoreText.text = 'Score: ' + score+"/10"; 
+    }
+   
 
 }
 
@@ -389,10 +412,10 @@ function catzurck(){
 }
 
 function schiisCat(){
-   
     cat.animations.stop();
     cat.body.collideWorldBounds = false;
     catgeschossen=true;
+    catsound.play();
 
 }
 
@@ -400,7 +423,6 @@ function wolks(plat){
     var wolk=plat.create(16, 16, 'wolk');
     var wolk1=plat.create(game.world.height+600, 50, 'wolk');
     var wolk2=plat.create(game.world.height+1900, 16, 'wolk');
-  
     var wolk4=plat.create(game.world.height+1500, 16, 'wolk');
     var wolk6=plat.create(game.world.height+4000, 20, 'wolk');
     wolk.body.immovable = true;
@@ -419,4 +441,24 @@ function takeblum(p,c){
    schiss=1;
 
   
+}
+
+function creatBobe(){
+    
+    var b1=bomben.create(game.world.height+2350, 940, 'bombe');
+   var b2=bomben.create(2500,940, 'bombe');
+   var b3=bomben.create(game.world.height+2800, 940, 'bombe');
+
+   b1.body.immovable=true;
+   b2.body.immovable=true;
+   b3.body.immovable=true;
+}
+
+function plyerBombe(p,b){
+    b.kill();
+    cat.animations.stop();
+    bombesound.play();
+    player.animations.stop();
+    gameOver=true;
+   console.log("bombe");
 }
